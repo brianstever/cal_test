@@ -25,18 +25,21 @@ const MyCalendar = () => {
     shiftsData.forEach(shift => {
       const { startDay, endDay, startTime, endTime } = shift;
   
-      const startMoment = moment().day(startDay).hour(startTime.split(':')[0]).minute(startTime.split(':')[1]);
-      let endMoment = moment().day(endDay).hour(endTime.split(':')[0]).minute(endTime.split(':')[1]);
+      // Convert day names to moment.js day indices
+      const startDayIndex = daysOfWeek.indexOf(startDay);
+      let startMoment = moment().day(startDayIndex).hour(startTime.split(':')[0]).minute(startTime.split(':')[1]);
   
-      if (endDay === startDay && endTime < startTime) {
-        // Overnight shift, ends next day
-        endMoment = endMoment.add(1, 'days');
-      } else if (endDay !== startDay) {
-        // Shift spans to different weekdays
-        const endDayIndex = daysOfWeek.indexOf(endDay);
-        const startDayIndex = daysOfWeek.indexOf(startDay);
-        const dayDifference = endDayIndex >= startDayIndex ? endDayIndex - startDayIndex : 7 - startDayIndex + endDayIndex;
-        endMoment = endMoment.add(dayDifference, 'days');
+      const endDayIndex = daysOfWeek.indexOf(endDay);
+      let endMoment = moment().day(endDayIndex).hour(endTime.split(':')[0]).minute(endTime.split(':')[1]);
+  
+      // If the end day is earlier in the week than the start day, add a week to the end moment
+      if (endDayIndex < startDayIndex) {
+        endMoment.add(1, 'week');
+      }
+  
+      // If the end time is earlier than the start time, and the days are the same, add a day to the end moment
+      if (endDayIndex === startDayIndex && endMoment.isBefore(startMoment)) {
+        endMoment.add(1, 'day');
       }
   
       // Add the shift event
