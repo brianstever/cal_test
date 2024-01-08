@@ -94,9 +94,32 @@ const MyCalendar = () => {
     setSelectedEvent(null);
   };
 
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    let style = {
+      backgroundColor: '',
+      borderRadius: '0px',
+      opacity: 0.8,
+      color: 'white',
+      border: '0px',
+      display: 'block'
+    };
+
+    if (event.title === 'Shift') {
+      style.backgroundColor = 'blue';
+    } else if (event.title === 'Take Melatonin') {
+      style.backgroundColor = 'purple';
+    } else if (event.title === 'Sleep') {
+      style.backgroundColor = 'green';
+    }
+
+    return {
+      style: style
+    };
+  };
+
   return (
     <div>
-      <button onClick={() => setShowShiftsForm(true)}>Manage Shifts</button>
+      <button className='bg-purple-500 hover:bg-purple-400 text-white px-4 py-2 rounded-md mt-4 mb-16' onClick={() => setShowShiftsForm(true)}>Manage Shifts</button>
 
       {showShiftsForm && (
         <ShiftsForm
@@ -124,6 +147,7 @@ const MyCalendar = () => {
         onView={setView}
         style={{ height: 800 }}
         showMultiDayTimes={true}
+        eventPropGetter={eventStyleGetter}
       />
     </div>
   );
